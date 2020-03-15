@@ -1,0 +1,29 @@
+function lrb() {
+ 
+  var botToken='***'//где *** токен
+  var SSID='***' //Адрес таблицы
+  var webAppUrl='***'//Твой web app 
+  var telegramUrl = "https://api.telegram.org/bot" + botToken;
+  var url = telegramUrl + "/setWebhook?url=" + webAppUrl;
+  var response = UrlFetchApp.fetch(url);
+  var spreadsheet=SpreadsheetApp.openById(SSID).getSheetByName("Остановлены") //лист с которого будем получать данные
+  var range=spreadsheet.getRange("A1:G500");//Диапазон данных 
+  var lastRow = spreadsheet.getLastRow();
+  var las_cell_a = range.getCell(lastRow, 1).getValue();//вытягиваем данные из последней строки следующих колонок
+  var las_cell_d = range.getCell(lastRow, 4).getValue();
+  var las_cell_g = range.getCell(lastRow, 7).getValue();
+  var message =  las_cell_a+" "+las_cell_d+" "+las_cell_g;//собираем интересующие нас данные в сообщение
+    //формируем с ним сообщение
+        var payload = {
+          'method': 'sendMessage',
+          'chat_id': '***',// id телеграма чата или канала куда отправлять уведомления
+          'text': message,
+          'parse_mode': 'HTML'
+        }     
+        var data = {
+          "method": "post",
+          "payload": payload
+        }
+    
+        UrlFetchApp.fetch('https://api.telegram.org/bot' +  botToken + '/', data );
+};
